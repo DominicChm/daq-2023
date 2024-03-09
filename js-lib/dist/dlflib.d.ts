@@ -1,5 +1,5 @@
 import { cType, readResult } from "lightstruct";
-import { dlf_meta_header_jst } from "./dlfTypes";
+import { dlf_meta_header_jst } from "./dlfTypes.js";
 /**
  * Creates an adapter to a remote, hosted, DLF Logfile
  */

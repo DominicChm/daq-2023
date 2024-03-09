@@ -1,44 +1,41 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.dlf_meta_header_t = exports.dlf_event_stream_sample_t = exports.event_logfile_header_t = exports.event_stream_header_t = exports.polled_logfile_header_t = exports.polled_stream_header_t = exports.logfile_header_t = exports.stream_header_t = void 0;
-const lightstruct_1 = require("lightstruct");
+import { array, referencedLength, string, struct, uint16, uint32, uint64, uint8 } from "lightstruct";
 /** **/
-const dlf_tick_t = lightstruct_1.uint64;
-const dlf_time_us_t = lightstruct_1.uint32;
-const dlf_stream_idx_t = lightstruct_1.uint16;
-exports.stream_header_t = (0, lightstruct_1.struct)({
-    type_id: (0, lightstruct_1.string)(128),
-    id: (0, lightstruct_1.string)(32),
-    notes: (0, lightstruct_1.string)(128),
-    type_size: lightstruct_1.uint32,
+const dlf_tick_t = uint64;
+const dlf_time_us_t = uint32;
+const dlf_stream_idx_t = uint16;
+export const stream_header_t = struct({
+    type_id: string(128),
+    id: string(32),
+    notes: string(128),
+    type_size: uint32,
 });
-exports.logfile_header_t = (0, lightstruct_1.struct)({
-    magic: lightstruct_1.uint16,
-    stream_type: lightstruct_1.uint8,
+export const logfile_header_t = struct({
+    magic: uint16,
+    stream_type: uint8,
     tick_span: dlf_tick_t,
-    num_streams: (0, lightstruct_1.referencedLength)(lightstruct_1.uint16),
+    num_streams: referencedLength(uint16),
 });
 /************ polled.dlf ************/
-exports.polled_stream_header_t = (0, lightstruct_1.struct)({
+export const polled_stream_header_t = struct({
     tick_interval: dlf_tick_t,
     tick_phase: dlf_tick_t,
-}, exports.stream_header_t);
-exports.polled_logfile_header_t = (0, lightstruct_1.struct)({
-    streams: (0, lightstruct_1.array)(exports.polled_stream_header_t, s => s.num_streams)
-}, exports.logfile_header_t);
+}, stream_header_t);
+export const polled_logfile_header_t = struct({
+    streams: array(polled_stream_header_t, s => s.num_streams)
+}, logfile_header_t);
 /************ events.dlf ************/
-exports.event_stream_header_t = exports.stream_header_t;
-exports.event_logfile_header_t = (0, lightstruct_1.struct)({
-    streams: (0, lightstruct_1.array)(exports.event_stream_header_t, s => s.num_streams)
-}, exports.logfile_header_t);
-exports.dlf_event_stream_sample_t = (0, lightstruct_1.struct)({
+export const event_stream_header_t = stream_header_t;
+export const event_logfile_header_t = struct({
+    streams: array(event_stream_header_t, s => s.num_streams)
+}, logfile_header_t);
+export const dlf_event_stream_sample_t = struct({
     stream: dlf_stream_idx_t,
     sample_tick: dlf_tick_t,
 });
 /********* meta.dlf *********/
-exports.dlf_meta_header_t = (0, lightstruct_1.struct)({
-    magic: lightstruct_1.uint16,
+export const dlf_meta_header_t = struct({
+    magic: uint16,
     tick_base_us: dlf_time_us_t,
-    application: (0, lightstruct_1.string)(32),
-    meta_size: lightstruct_1.uint32
+    application: string(32),
+    meta_size: uint32
 });

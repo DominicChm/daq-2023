@@ -1,5 +1,5 @@
 import { cType, readResult } from "lightstruct"
-import { dlf_event_stream_sample_t, dlf_meta_header_jst, dlf_meta_header_t, event_logfile_header_t, polled_logfile_header_t } from "./dlfTypes"
+import { dlf_event_stream_sample_t, dlf_meta_header_jst, dlf_meta_header_t, event_logfile_header_t, polled_logfile_header_t } from "./dlfTypes.js"
 
 /**
  * Creates an adapter to a remote, hosted, DLF Logfile 

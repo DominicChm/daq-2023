@@ -1,26 +1,22 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HTTPAdapter = exports.Adapter = exports.LogClient = void 0;
-const dlfTypes_1 = require("./dlfTypes");
+import { dlf_event_stream_sample_t, dlf_meta_header_t, event_logfile_header_t, polled_logfile_header_t } from "./dlfTypes.js";
 /**
  * Creates an adapter to a remote, hosted, DLF Logfile
  */
-class LogClient {
+export class LogClient {
     constructor(adapter) {
     }
 }
-exports.LogClient = LogClient;
 class EventInterface {
 }
 class PolledInterface {
 }
-class Adapter {
+export class Adapter {
     constructor(type_parsers) {
         this._type_parsers = type_parsers;
     }
     /** From metafile **/
     async meta_header() {
-        return dlfTypes_1.dlf_meta_header_t.read(await this.meta_dlf);
+        return dlf_meta_header_t.read(await this.meta_dlf);
     }
     async meta(meta_parsers) {
         const [metaHeader, metaHeaderSize] = await this.meta_header();
@@ -28,15 +24,15 @@ class Adapter {
         const parser = meta_parsers[metaHeader.application];
         if (!parser)
             return null;
-        return parser.read(await this.meta_dlf, dlfTypes_1.dlf_meta_header_t.minSize);
+        return parser.read(await this.meta_dlf, dlf_meta_header_t.minSize);
     }
     async polled_header() {
         let polledDataFile = await this.polled_dlf;
-        return dlfTypes_1.polled_logfile_header_t.read(polledDataFile);
+        return polled_logfile_header_t.read(polledDataFile);
     }
     async events_header() {
         let eventDataFile = await this.events_dlf;
-        return dlfTypes_1.event_logfile_header_t.read(eventDataFile);
+        return event_logfile_header_t.read(eventDataFile);
     }
     async events_data() {
         let [header, header_len] = await this.events_header();
@@ -46,7 +42,7 @@ class Adapter {
         const dataFile = await this.events_dlf;
         let dataFileLen = dataFile.byteLength;
         for (let i = header_len; i < dataFileLen;) {
-            const [sampleHeader, sampleHeaderLen] = dlfTypes_1.dlf_event_stream_sample_t.read(dataFile, i);
+            const [sampleHeader, sampleHeaderLen] = dlf_event_stream_sample_t.read(dataFile, i);
             if (!sampleHeader)
                 throw new Error(sampleHeaderLen);
             i += sampleHeaderLen;
@@ -90,7 +86,6 @@ class Adapter {
         return Object.assign({}, await this.polled_data(), await this.events_data());
     }
 }
-exports.Adapter = Adapter;
 /**
  * Todo.
  * Takes a DLF run archive, unzips it, and holds it in memory for reading.
@@ -100,7 +95,7 @@ exports.Adapter = Adapter;
 /**
  * interacts with an unarchived run at a URL
  */
-class HTTPAdapter extends Adapter {
+export class HTTPAdapter extends Adapter {
     constructor(type_parsers, url) {
         super(type_parsers);
         this._baseUrl = url;
@@ -115,4 +110,3 @@ class HTTPAdapter extends Adapter {
         return fetch(this._baseUrl + "/meta.dlf").then(r => r.arrayBuffer());
     }
 }
-exports.HTTPAdapter = HTTPAdapter;

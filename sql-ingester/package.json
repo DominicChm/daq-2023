@@ -13,5 +13,6 @@
     "dlflib-js": "file:../js-lib",
     "express": "^4.18.3",
     "lightstruct": "file:../../lightstruct"
-  }
+  },
+  "type": "module"
 }
